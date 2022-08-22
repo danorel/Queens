@@ -1,5 +1,8 @@
 package entities;
 
+import org.apache.commons.math3.util.Pair;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
@@ -45,6 +48,28 @@ public class Board {
             cells[r][c] = Board.QUEEN;
         }
         return new Board(k, cells);
+    }
+
+    public ArrayList<Pair<Integer, Integer>> getQueens() {
+        ArrayList<Pair<Integer, Integer>> coordinates = new ArrayList<>();
+
+        for (int i = 0; i < k; ++i) {
+            for (int j = 0; j < k; ++j) {
+                if (cells[i][j] == QUEEN) {
+                    coordinates.add(new Pair<>(i, j));
+                }
+            }
+        }
+
+        return coordinates;
+    }
+
+    public int getK() {
+        return k;
+    }
+
+    public char[][] getCells() {
+        return cells;
     }
 
     @Override

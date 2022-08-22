@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import entities.Board;
+import utils.FitnessScore;
 import utils.Population;
 
 import static test.Input.TEST_8x8;
@@ -13,7 +14,9 @@ class QueenGenetic {
         int k = scanner.nextInt();
 
         Board[] population = Population.generateAll(k);
-
         System.out.println(Arrays.toString(population));
+
+        Board instance = Population.generateOne(k);
+        System.out.println(FitnessScore.evaluate(instance));
     }
 }
