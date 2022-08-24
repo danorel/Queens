@@ -1,16 +1,10 @@
 package utils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.*;
 
 import entities.Board;
 
 public class Selection {
-
-    public static PriorityQueue<Board> elitism(Board[] prevGeneration) {
-        return Selection.elitism(prevGeneration, 50);
-    }
 
     public static PriorityQueue<Board> elitism(Board[] prevGeneration, int culling) {
         if (culling < 0 || culling > 100) {
@@ -19,17 +13,10 @@ public class Selection {
 
         int eliteSize = (int) Math.round(prevGeneration.length * (double)(1 - culling / 100));
 
-        PriorityQueue<Board> eliteQueue = new PriorityQueue<>(eliteSize, Comparator.comparingInt(FitnessScore::evaluate));
-
-        for (int i = 0; i < eliteSize; i++) {
-            eliteQueue.add(prevGeneration[i]);
-        }
+        PriorityQueue<Board> eliteQueue = new PriorityQueue<>(Comparator.comparingInt(FitnessScore::evaluate));
+        eliteQueue.addAll(Arrays.asList(prevGeneration).subList(0, eliteSize));
 
         return eliteQueue;
-    }
-
-    public static Board[] reproduce(Board[] prevGeneration) {
-        return Selection.reproduce(prevGeneration, 2, 50);
     }
 
     public static Board[] reproduce(Board[] prevGeneration, int successors, int culling) {
@@ -41,18 +28,22 @@ public class Selection {
             Board eliteFather = eliteGeneration.poll();
             assert eliteFather != null;
             Board eliteMother = eliteGeneration.poll();
-            assert eliteMother != null;
+            if (eliteMother == null) {
+                break;
+            }
 
             for (int successor = 0; successor < successors; ++successor) {
-                Board child = Selection.crossing(eliteFather, eliteMother);
-                nextGeneration.add(child);
+                Board[] children = Selection.crossing(eliteFather, eliteMother, successors);
+                nextGeneration.addAll(List.of(children));
             }
         }
 
         return nextGeneration.toArray(new Board[0]);
     }
 
-    public static Board crossing(Board father, Board mother) {
+    public static Board[] crossing(Board father, Board mother, int successors) {
+        Board[] children = new Board[successors];
+
         String fatherDNK = father.getDNK();
         String motherDNK = mother.getDNK();
 
@@ -62,11 +53,15 @@ public class Selection {
             throw new RuntimeException("Parent's DNK has not the same size");
         }
 
-        int crossoverPoint = Math.toIntExact(Math.round(Math.random() * childDNKLength));
+        for (int successor = 0; successor < successors; ++successor) {
+            int crossoverPoint = Math.toIntExact(Math.round(Math.random() * childDNKLength));
 
-        String childDNK = fatherDNK.substring(0, crossoverPoint) + motherDNK.substring(crossoverPoint);
+            String childDNK = fatherDNK.substring(0, crossoverPoint) + motherDNK.substring(crossoverPoint);
 
-        return Board.getInstance(childDNK);
+            children[successor] = Board.getInstance(childDNK);
+        }
+
+        return children;
     }
 }
 
