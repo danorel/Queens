@@ -23,19 +23,19 @@ public class Board {
         }
     }
 
-    public static String encode(Board board) {
+    public String getDNK() {
         StringBuilder DNK = new StringBuilder();
-        for (int i = 0; i < board.cells.length; ++i) {
-            for (int j = 0; j < board.cells[i].length; ++j) {
-                if (board.cells[i][j] == Board.QUEEN) {
-                    DNK.append(String.valueOf(j));
+        for (int i = 0; i < this.cells.length; ++i) {
+            for (int j = 0; j < this.cells[i].length; ++j) {
+                if (this.cells[i][j] == Board.QUEEN) {
+                    DNK.append(j);
                 }
             }
         }
         return DNK.toString();
     }
 
-    public static Board decode(String DNK) {
+    public static Board getInstance(String DNK) {
         int k = DNK.length();
         char[][] cells = new char[k][k];
         for (int i = 0; i < k; ++i) {
@@ -44,7 +44,7 @@ public class Board {
             }
         }
         for (int c = 0; c < k; ++c) {
-            int r = Integer.parseInt(String.valueOf(DNK.charAt(c))) - 1;
+            int r = Integer.parseInt(String.valueOf(DNK.charAt(c)));
             cells[r][c] = Board.QUEEN;
         }
         return new Board(k, cells);
