@@ -34,8 +34,6 @@ public class Selection {
 
     public static Board[] reproduce(Board[] prevGeneration, int successors, int culling) {
         PriorityQueue<Board> eliteGeneration = Selection.elitism(prevGeneration, culling);
-        System.out.println("Elite alpha: " + eliteGeneration.peek());
-        System.out.println("Elite score: " + FitnessScore.evaluate(eliteGeneration.peek()));
 
         ArrayList<Board> nextGeneration = new ArrayList<>(eliteGeneration.size() * successors);
 

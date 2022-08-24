@@ -4,13 +4,14 @@ import entities.Board;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class Population {
     public static final int SIZE = 64;
 
-    public static boolean hasAchievedGoal(Board []population) {
-        return Arrays.stream(population).anyMatch(instance -> FitnessScore.evaluate(instance) == 0);
+    public static Optional<Board> uber(Board []population) {
+        return Arrays.stream(population).filter(maybeUber -> FitnessScore.evaluate(maybeUber) == 0).findFirst();
     }
 
     public static Board[] generateAll(int k) {
