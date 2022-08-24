@@ -18,14 +18,16 @@ class QueenGenetic {
         int successorsMin = 1, successorsMax = 10;
         int cullingMin = 1, cullingMax = 99;
 
-        for (int successors = successorsMin; successors < successorsMax; ++successors) {
-            for (int culling = cullingMin; culling < cullingMax; ++culling) {
+        for (int successors = successorsMin; successors < successorsMax; successors += Math.toIntExact((long) Math.sqrt(k))) {
+            for (int culling = cullingMin; culling < cullingMax; culling += Math.toIntExact((long) Math.sqrt(k))) {
                 Board[] population = initialPopulation.clone();
                 int currentGeneration = goal(population, successors, culling);
-                if (currentGeneration < effectiveConfiguration[0]) {
-                    effectiveConfiguration[0] = currentGeneration;
-                    effectiveConfiguration[1] = successors;
-                    effectiveConfiguration[2] = culling;
+                if (currentGeneration != -1) {
+                    if (currentGeneration < effectiveConfiguration[0]) {
+                        effectiveConfiguration[0] = currentGeneration;
+                        effectiveConfiguration[1] = successors;
+                        effectiveConfiguration[2] = culling;
+                    }
                 }
             }
         }
@@ -40,7 +42,7 @@ class QueenGenetic {
         for (int generation = 1; generation <= generations; ++generation) {
             Optional<Board> uber = Population.uber(population);
             if (uber.isPresent()) {
-                System.out.println("Population has achieved the goal by " + generation + " generation");
+                System.out.println("Population has achieved the goal by " + generation + " generation (successors: " + successors + ", culling: " + culling + ")");
                 System.out.println("Uber instance: " + uber);
                 return generation;
             }
@@ -63,6 +65,6 @@ class QueenGenetic {
             System.out.println("Population has failed to find the goal");
         }
 
-        analyze(9);
+        analyze(k);
     }
 }
