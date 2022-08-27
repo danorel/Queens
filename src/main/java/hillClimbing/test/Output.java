@@ -1,14 +1,16 @@
 package hillClimbing.test;
 
+import java.util.Map;
+
 public class Output {
-    public enum OutputType {
+    public enum Type {
         PLATEAU,
         LOCAL_MAXIMA,
         GLOBAL_MAXIMA,
         UNKNOWN,
     }
 
-    public static void print(OutputType result) {
+    public static void printType(Type result) {
         switch (result) {
             case PLATEAU: {
                 System.out.println("Instance has reached plateau");
@@ -26,5 +28,9 @@ public class Output {
                 throw new RuntimeException("Unknown case");
             }
         }
+    }
+
+    public static void printReport(Map<Type, Integer> report) {
+        report.forEach((type, frequency) -> System.out.println(type + ": " + frequency));
     }
 }

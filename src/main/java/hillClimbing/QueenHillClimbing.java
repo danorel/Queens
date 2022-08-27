@@ -1,5 +1,6 @@
 package hillClimbing;
 
+import hillClimbing.abstractions.QueenHillClimbingSolver;
 import hillClimbing.entities.Board;
 import hillClimbing.test.Input;
 import hillClimbing.test.Output;
@@ -8,73 +9,61 @@ import hillClimbing.utils.Population;
 
 import java.util.*;
 
-public class QueenHillClimbing {
-    public static void analyze(int k) {
-        HashMap<Output.OutputType, Integer> report = new HashMap<>();
+public class QueenHillClimbing extends QueenHillClimbingSolver {
 
-        Board[] population = Population.generateAll(k);
+    @Override
+    public Output.Type goal(Board initialBoard) {
+        Board currentBoard = new Board(initialBoard);
+        int k = initialBoard.getK();
 
-        for (Board instance : population) {
-            Output.OutputType result = goal(instance);
-            if (report.containsKey(result)) {
-                Integer frequency = report.get(result);
-                report.put(result, frequency + 1);
-            } else {
-                report.put(result, 1);
-            }
-        }
+        int maxPlateauMoves = k * k, plateauMoves = 0;
+        int minCrossings = FitnessScore.evaluate(initialBoard);
 
-        report.forEach((output, frequency) -> System.out.println(output + ": " + frequency));
-    }
-
-    public static Output.OutputType goal(Board instance) {
-        Board[] population = instance.expand();
-        int k = instance.getK();
-
-        int maxPlateau = k * k, plateau = 0;
-        int minHeight = FitnessScore.evaluate(instance);
+        Board[] currentBoardSuccessors = currentBoard.expand();
 
         while (true) {
-            Optional<Board> maybePeek = Population.peek(population);
-            if (maybePeek.isPresent()) {
-                Board peek = maybePeek.get();
-                System.out.println("Peek instance: " + peek);
-                return Output.OutputType.GLOBAL_MAXIMA;
+            Optional<Board> maybePeekBoard = Population.peek(currentBoardSuccessors);
+            if (maybePeekBoard.isPresent()) {
+                Board peekBoard = maybePeekBoard.get();
+                System.out.println("Peek board: " + peekBoard);
+                return Output.Type.GLOBAL_MAXIMA;
             }
 
-            Optional<Board> maybeNext = Population.min(population);
-            if (maybeNext.isEmpty()) {
-                return Output.OutputType.UNKNOWN;
+            Optional<Board> maybeNextBoard = Population.min(currentBoardSuccessors);
+            if (maybeNextBoard.isEmpty()) {
+                return Output.Type.UNKNOWN;
             }
 
-            Board next = maybeNext.get();
-            int nextHeight = FitnessScore.evaluate(next);
+            Board nextBoard = maybeNextBoard.get();
+            int nextCrossings = FitnessScore.evaluate(nextBoard);
 
-            if (nextHeight > minHeight) {
-                return Output.OutputType.LOCAL_MAXIMA;
-            } else if (nextHeight == minHeight) {
-                if (plateau >= maxPlateau) {
-                    return Output.OutputType.PLATEAU;
+            if (nextCrossings > minCrossings) {
+                return Output.Type.LOCAL_MAXIMA;
+            } else if (nextCrossings == minCrossings) {
+                if (plateauMoves >= maxPlateauMoves) {
+                    return Output.Type.PLATEAU;
                 } else {
-                    population = next.expand();
-                    ++plateau;
+                    currentBoard = nextBoard;
+                    currentBoardSuccessors = currentBoard.expand();
+                    ++plateauMoves;
                 }
             } else {
-                population = next.expand();
-                minHeight = nextHeight;
-                plateau = 0;
+                currentBoard = nextBoard;
+                currentBoardSuccessors = currentBoard.expand();
+                minCrossings = nextCrossings;
+                plateauMoves = 0;
             }
         }
     }
 
     public static void main(String[] args) {
+        QueenHillClimbing solver = new QueenHillClimbing();
+
         Scanner scanner = new Scanner(Input.TEST_7x7);
 
         int k = scanner.nextInt();
 
-        Board instance = Population.generateOne(k);
-        Output.print(goal(instance));
-
-        analyze(k);
+        Output.printType(solver.goal(Population.generateOne(k)));
+        Output.printReport(solver.report(k));
     }
 }
