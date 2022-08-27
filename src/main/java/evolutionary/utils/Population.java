@@ -1,6 +1,6 @@
-package utils;
+package evolutionary.utils;
 
-import entities.Board;
+import evolutionary.entities.Board;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,10 +26,6 @@ public class Population {
             }
         }
         return boards;
-    }
-
-    public static Board generateOne(int k) {
-        return generate(k);
     }
 
     private static Board generate(int k) {

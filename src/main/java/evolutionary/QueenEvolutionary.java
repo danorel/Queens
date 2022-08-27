@@ -1,13 +1,15 @@
+package evolutionary;
+
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
-import entities.Board;
-import test.Input;
-import utils.Population;
-import utils.Selection;
+import evolutionary.entities.Board;
+import evolutionary.test.Input;
+import evolutionary.utils.Population;
+import evolutionary.utils.Selection;
 
-class QueenGenetic {
+class QueenEvolutionary {
     public static final int NOT_FOUND = -1;
     public static final int GENERATIONS = 64;
 
@@ -52,7 +54,6 @@ class QueenGenetic {
         for (int generation = 1; generation <= GENERATIONS; ++generation) {
             Optional<Board> uber = Population.uber(population);
             if (uber.isPresent()) {
-                System.out.println("Population has achieved the goal by " + generation + " generation (successors: " + successors + ", mutation: " + mutation + ", culling: " + culling + ")");
                 System.out.println("Uber instance: " + uber);
                 return generation;
             }
@@ -72,8 +73,12 @@ class QueenGenetic {
 
         Board[] population = Population.generateAll(k);
 
-        if (goal(population, successors, mutation, culling) == NOT_FOUND) {
+        int result = goal(population, successors, mutation, culling);
+
+        if (result == NOT_FOUND) {
             System.out.println("Population has failed to find the goal");
+        } else {
+            System.out.println("Population has achieved the goal by " + result + " generation (successors: " + successors + ", mutation: " + mutation + ", culling: " + culling + ")");
         }
 
         analyze(k);

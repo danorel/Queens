@@ -1,8 +1,8 @@
-package utils;
+package evolutionary.utils;
 
 import java.util.*;
 
-import entities.Board;
+import evolutionary.entities.Board;
 
 public class Selection {
 

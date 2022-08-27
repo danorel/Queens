@@ -1,7 +1,26 @@
 # Queens
 
-- [x] Genetic algorithm with culling and elitism in selection processes.
-- [x] Analyzer for best configuration of natural selection process.
+#### Hill climbing algorithm.
+
+Statistics for **6** Queens:
+
+- Global maxima: 3
+- Local maxima: 39
+- Plateau: 174
+
+Statistics for **7** Queens:
+
+- Global maxima: 10
+- Local maxima: 44
+- Plateau: 289
+
+Statistics for **8** Queens:
+
+- Global maxima: 3
+- Local maxima: 72
+- Plateau: 437
+
+#### Genetic algorithm with selection (culling, crossing, mutation, and elitism) processes.
 
 Most effective population configuration for **8** Queens:
 - successors: 3, mutation: 0%, culling: 1%

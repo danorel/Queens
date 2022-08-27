@@ -1,17 +1,18 @@
-package entities;
+package evolutionary.entities;
 
+import java.util.*;
 import org.apache.commons.math3.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class Board {
-
     public static final char QUEEN = 'q';
     public static final char EMPTY = '-';
 
     private int k;
     private char[][] cells;
+
+    public Board(Board that) {
+        this(that.k, that.cells);
+    }
 
     public Board(int k, char[][] cells) {
         this.k = k;

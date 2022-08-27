@@ -1,17 +1,16 @@
-package utils;
+package evolutionary.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
-
 import org.apache.commons.math3.util.Pair;
 
-import entities.Board;
+import evolutionary.entities.Board;
 
 public class FitnessScore {
 
-    static final int[][] vectors = new int[][]{
+    private static final int[][] vectors = new int[][]{
             new int[]{ 0, 1 },
             new int[]{ 1, 0 },
             new int[]{ -1, 0 },
@@ -28,10 +27,10 @@ public class FitnessScore {
         ArrayList<Pair<Integer, Integer>> queens = board.getQueens();
 
         for (Pair<Integer, Integer> queen : queens) {
-            int r = queen.getFirst();
-            int c = queen.getSecond();
+            int x = queen.getFirst();
+            int y = queen.getSecond();
 
-            rate += starCount(board, r, c);
+            rate += starCount(board, x, y);
         }
 
         return rate;
@@ -73,5 +72,9 @@ public class FitnessScore {
         }
 
         return rate;
+    }
+
+    public static int compare(Board o1, Board o2) {
+        return evaluate(o1) - evaluate(o2);
     }
 }
