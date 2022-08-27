@@ -13,15 +13,15 @@ public class Output {
     public static void printType(Type result) {
         switch (result) {
             case PLATEAU: {
-                System.out.println("Instance has reached plateau");
+                System.out.println("Board instance has reached plateau");
                 break;
             }
             case LOCAL_MAXIMA: {
-                System.out.println("Instance has reached local maxima");
+                System.out.println("Board instance has reached local maxima");
                 break;
             }
             case GLOBAL_MAXIMA: {
-                System.out.println("Instance has reached global maxima by " + result + " step");
+                System.out.println("Board instance has reached global maxima");
                 break;
             }
             default: {

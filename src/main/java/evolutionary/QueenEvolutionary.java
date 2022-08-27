@@ -7,6 +7,7 @@ import java.util.Scanner;
 import evolutionary.entities.Board;
 import evolutionary.test.Input;
 import evolutionary.utils.Population;
+import evolutionary.utils.Search;
 import evolutionary.utils.Selection;
 
 class QueenEvolutionary {
@@ -52,7 +53,7 @@ class QueenEvolutionary {
 
     public static int goal(Board[] population, int successors, int mutation, int culling) {
         for (int generation = 1; generation <= GENERATIONS; ++generation) {
-            Optional<Board> uber = Population.uber(population);
+            Optional<Board> uber = Search.uber(population);
             if (uber.isPresent()) {
                 System.out.println("Uber instance: " + uber);
                 return generation;

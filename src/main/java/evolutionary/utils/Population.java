@@ -2,16 +2,10 @@ package evolutionary.utils;
 
 import evolutionary.entities.Board;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public class Population {
-    public static Optional<Board> uber(Board []population) {
-        return Arrays.stream(population).filter(maybeUber -> FitnessScore.evaluate(maybeUber) == 0).findFirst();
-    }
-
     public static Board[] generateAll(int k) {
         Set<String> cache = new HashSet<>();
         int size = k * k;

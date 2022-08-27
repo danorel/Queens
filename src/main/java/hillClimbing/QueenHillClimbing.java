@@ -1,5 +1,8 @@
 package hillClimbing;
 
+import java.util.*;
+import org.jetbrains.annotations.Nullable;
+
 import hillClimbing.abstractions.QueenHillClimbingSolver;
 import hillClimbing.entities.Board;
 import hillClimbing.test.Input;
@@ -7,9 +10,12 @@ import hillClimbing.test.Output;
 import hillClimbing.utils.FitnessScore;
 import hillClimbing.utils.Population;
 
-import java.util.*;
-
 public class QueenHillClimbing extends QueenHillClimbingSolver {
+
+    @Override
+    public Optional<Board> search(Board[] successorBoards, @Nullable Board boundaryBoard) {
+        return Arrays.stream(successorBoards).min(FitnessScore::compare);
+    }
 
     @Override
     public Output.Type goal(Board initialBoard) {
@@ -22,14 +28,14 @@ public class QueenHillClimbing extends QueenHillClimbingSolver {
         Board[] currentBoardSuccessors = currentBoard.expand();
 
         while (true) {
-            Optional<Board> maybePeekBoard = Population.peek(currentBoardSuccessors);
+            Optional<Board> maybePeekBoard = this.peek(currentBoardSuccessors);
             if (maybePeekBoard.isPresent()) {
                 Board peekBoard = maybePeekBoard.get();
                 System.out.println("Peek board: " + peekBoard);
                 return Output.Type.GLOBAL_MAXIMA;
             }
 
-            Optional<Board> maybeNextBoard = Population.min(currentBoardSuccessors);
+            Optional<Board> maybeNextBoard = this.search(currentBoardSuccessors, null);
             if (maybeNextBoard.isEmpty()) {
                 return Output.Type.UNKNOWN;
             }
