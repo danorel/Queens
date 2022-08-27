@@ -4,21 +4,21 @@
 
 Statistics for **6** Queens:
 
-- Global maxima: 3
-- Local maxima: 39
-- Plateau: 174
+- Global maxima: 8
+- Local maxima: 78
+- Plateau: 130
 
 Statistics for **7** Queens:
 
-- Global maxima: 10
-- Local maxima: 44
-- Plateau: 289
+- Global maxima: 24
+- Local maxima: 102
+- Plateau: 217
 
 Statistics for **8** Queens:
 
-- Global maxima: 3
-- Local maxima: 72
-- Plateau: 437
+- Global maxima: 16
+- Local maxima: 193
+- Plateau: 303
 
 #### Genetic algorithm with selection (culling, crossing, mutation, and elitism) processes.
 
