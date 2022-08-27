@@ -76,6 +76,23 @@ public class Board {
         return coordinates;
     }
 
+    public Board random() {
+        ArrayList<Pair<Integer, Integer>> coordinates = this.getQueens();
+
+        int randomCoordinate = Math.toIntExact(Math.round(Math.random() * (coordinates.size() - 1)));
+
+        Pair<Integer, Integer> coordinate = coordinates.get(randomCoordinate);
+
+        int x = coordinate.getFirst();
+        int y = coordinate.getSecond();
+
+        Board[] successors = expandByCoordinates(x, y);
+
+        int randomSuccessor = Math.toIntExact(Math.round(Math.random() * (successors.length - 1)));
+
+        return successors[randomSuccessor];
+    }
+
     public Board[] expand() {
         ArrayList<Board> instances = new ArrayList<>();
 

@@ -1,7 +1,9 @@
 package hillClimbing;
 
-import java.util.*;
-import org.apache.commons.math3.util.Pair;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Scanner;
+import org.jetbrains.annotations.Nullable;
 
 import hillClimbing.abstractions.QueenHillClimbingSolver;
 import hillClimbing.entities.Board;
@@ -10,47 +12,39 @@ import hillClimbing.test.Output;
 import hillClimbing.utils.FitnessScore;
 import hillClimbing.utils.Population;
 
-public class QueenStochasticHillClimbing extends QueenHillClimbingSolver {
+public class QueenFirstChoiceHillClimbing extends QueenHillClimbingSolver {
 
     @Override
-    public Optional<Board> search(Board[] successorBoards, Board boundaryBoard) {
-        int boundaryCrossings = FitnessScore.evaluate(boundaryBoard);
+    public Optional<Board> search(@Nullable Board[] successorBoards, Board currentBoard) {
+        int currentCrossings = FitnessScore.evaluate(currentBoard);
 
-        Board[] steeperBoards = Arrays.stream(successorBoards).filter(successorBoard -> FitnessScore.evaluate(successorBoard) < boundaryCrossings).toArray(Board[]::new);
+        int k = currentBoard.getK();
+        int maxRandomMoves = k * k, randomMoves = 0;
 
-        double steeperTotalCrossings = Arrays.stream(steeperBoards).mapToDouble(FitnessScore::evaluate).reduce(0, Double::sum);
+        while (true) {
+            if (randomMoves >= maxRandomMoves) {
+                return Optional.empty();
+            }
 
-        if (steeperTotalCrossings == 0) {
-            return Optional.empty();
+            Board nextBoard = currentBoard.random();
+
+            int nextCrossings = FitnessScore.evaluate(nextBoard);
+
+            if (nextCrossings < currentCrossings) {
+                return Optional.of(nextBoard);
+            }
+
+            ++randomMoves;
         }
-
-        HashMap<Board, Pair<Double, Double>>
-                steeperBoardsProbabilities = new HashMap<>();
-
-        double probabilityStart = 0;
-        for (Board steeperBoard : steeperBoards) {
-            double steeperCrossings = FitnessScore.evaluate(steeperBoard);
-            double probabilityMargin = steeperCrossings / steeperTotalCrossings;
-            double probabilityEnd = probabilityStart + probabilityMargin;
-            steeperBoardsProbabilities.put(steeperBoard, new Pair<>(probabilityStart, probabilityEnd));
-            probabilityStart = probabilityEnd;
-        }
-
-        double random = Math.random();
-
-        return steeperBoardsProbabilities.keySet().stream().filter((steeperBoard) -> {
-            Pair<Double, Double> probability = steeperBoardsProbabilities.get(steeperBoard);
-            return random >= probability.getFirst() && random <= probability.getSecond();
-        }).findFirst();
     }
 
     @Override
     public Output.Type goal(Board initialBoard) {
         Board currentBoard = new Board(initialBoard);
-        int k = currentBoard.getK();
+        int k = initialBoard.getK();
 
         int maxPlateauMoves = k * k, plateauMoves = 0;
-        int minCrossings = FitnessScore.evaluate(currentBoard);
+        int minCrossings = FitnessScore.evaluate(initialBoard);
 
         Board[] currentBoardSuccessors = currentBoard.expand();
 
@@ -62,9 +56,9 @@ public class QueenStochasticHillClimbing extends QueenHillClimbingSolver {
                 return Output.Type.GLOBAL_MAXIMA;
             }
 
-            Optional<Board> maybeNextBoard = this.search(currentBoardSuccessors, currentBoard);
+            Optional<Board> maybeNextBoard = this.search(null, currentBoard);
             if (maybeNextBoard.isEmpty()) {
-                return Output.Type.LOCAL_MAXIMA;
+                return Output.Type.PLATEAU;
             }
 
             Board nextBoard = maybeNextBoard.get();
@@ -90,7 +84,7 @@ public class QueenStochasticHillClimbing extends QueenHillClimbingSolver {
     }
 
     public static void main(String[] args) {
-        QueenStochasticHillClimbing solver = new QueenStochasticHillClimbing();
+        QueenFirstChoiceHillClimbing solver = new QueenFirstChoiceHillClimbing();
 
         Scanner scanner = new Scanner(Input.TEST_7x7);
 
