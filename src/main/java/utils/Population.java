@@ -8,17 +8,16 @@ import java.util.Optional;
 import java.util.Set;
 
 public class Population {
-    public static final int SIZE = 64;
-
     public static Optional<Board> uber(Board []population) {
         return Arrays.stream(population).filter(maybeUber -> FitnessScore.evaluate(maybeUber) == 0).findFirst();
     }
 
     public static Board[] generateAll(int k) {
         Set<String> cache = new HashSet<>();
-        Board[] boards = new Board[SIZE];
+        int size = k * k;
+        Board[] boards = new Board[size];
         int i = 0;
-        while (i < SIZE) {
+        while (i < size) {
             Board board = generate(k);
             String DNK = board.getDNK();
             if (!cache.contains(DNK)) {

@@ -19,7 +19,7 @@ public class Selection {
         return eliteQueue;
     }
 
-    public static Board[] reproduce(Board[] prevGeneration, int successors, int culling) {
+    public static Board[] reproduce(Board[] prevGeneration, int successors, int mutationRate, int culling) {
         PriorityQueue<Board> eliteGeneration = Selection.elitism(prevGeneration, culling);
 
         ArrayList<Board> nextGeneration = new ArrayList<>(eliteGeneration.size() * successors);
@@ -33,7 +33,7 @@ public class Selection {
             }
 
             for (int successor = 0; successor < successors; ++successor) {
-                Board[] children = Selection.crossing(eliteFather, eliteMother, successors);
+                Board[] children = Selection.crossing(eliteFather, eliteMother, successors, mutationRate);
                 nextGeneration.addAll(List.of(children));
             }
         }
@@ -41,27 +41,55 @@ public class Selection {
         return nextGeneration.toArray(new Board[0]);
     }
 
-    public static Board[] crossing(Board father, Board mother, int successors) {
+    public static Board[] crossing(Board father, Board mother, int successors, int mutationRate) {
         Board[] children = new Board[successors];
 
         String fatherDNK = father.getDNK();
         String motherDNK = mother.getDNK();
 
-        int childDNKLength = Math.min(fatherDNK.length(), motherDNK.length());
-
-        if (fatherDNK.length() != childDNKLength || motherDNK.length() != childDNKLength) {
+        if (fatherDNK.length() != motherDNK.length()) {
             throw new RuntimeException("Parent's DNK has not the same size");
         }
 
         for (int successor = 0; successor < successors; ++successor) {
-            int crossoverPoint = Math.toIntExact(Math.round(Math.random() * childDNKLength));
+            String childDNK = cross(fatherDNK, motherDNK);
+            String childDNKMutated = mutate(childDNK, mutationRate);
 
-            String childDNK = fatherDNK.substring(0, crossoverPoint) + motherDNK.substring(crossoverPoint);
-
-            children[successor] = Board.getInstance(childDNK);
+            children[successor] = Board.getInstance(childDNKMutated);
         }
 
         return children;
+    }
+
+    private static String cross(String fatherDNK, String motherDNK) {
+        int childDNKLength = Math.min(fatherDNK.length(), motherDNK.length());
+        int crossoverPoint = Math.toIntExact(Math.round(Math.random() * childDNKLength));
+        return fatherDNK.substring(0, crossoverPoint) + motherDNK.substring(crossoverPoint);
+    }
+
+    private static String mutate(String DNK, int mutationRate) {
+        if (mutationRate < 0 || mutationRate > 100) {
+            throw new RuntimeException("Culling factor is not between 0 and 100");
+        }
+
+        ArrayList<Integer> digits = new ArrayList<>();
+        for (char digit : DNK.toCharArray()) {
+            digits.add(Character.digit(digit, 10));
+        }
+
+        StringBuilder DNKCopy = new StringBuilder(DNK);
+
+        for (int index = 0; index < DNK.length(); ++index) {
+            int decision = Math.toIntExact(Math.round((Math.random() * 100)));
+
+            if (decision <= mutationRate) {
+                int randomIndex = Math.toIntExact(Math.round((Math.random() * (digits.size() - 1))));
+                int randomDigit = digits.get(randomIndex);
+                DNKCopy.setCharAt(index, (char) (randomDigit + '0'));
+            }
+        }
+
+        return DNKCopy.toString();
     }
 }
 
